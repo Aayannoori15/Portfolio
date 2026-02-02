@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}About | Aayan Noori{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="section-nav section-nav--sticky">
+        <a class="chip-btn" href="#education">Education</a>
+        <a class="chip-btn" href="#experience">Experience</a>
+        <a class="chip-btn" href="#achievements">Achievements</a>
+        <a class="chip-btn" href="#certifications">Certifications</a>
+    </div>
+
+    <div class="card page-hero">
+        <h1>About</h1>
+        <p class="page-hero-subtitle">
+           All about Education, experience, achievements, and certifications.
+        </p>
+    </div>
+
+    <div class="card" id="education">
+    <h2>Education</h2>
+    <div class="timeline">
+        {% for edu in education_key %}
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <h3>{{ edu.course }} / {{ edu.institute_name }}</h3>
+                <span>{{ edu.start_date|date:"Y" }} – {{ edu.end_date|date:"Y" }} · {{ edu.location }}</span>
+                <p>{{ edu.description }}</p>
+                {% if edu.images %}
+                <img src="{{ edu.images.url }}" alt="{{ edu.institute_name }} image" style="margin-top:0.5rem; border-radius:8px; max-width:100%;">
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p>No education records available.</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+    <div class="card" id="experience">
+        <h2>Experience</h2>
+        {% for exp in experience_key %}
+            <div class="card experience-card">
+                <img src="{{ exp.images.url }}" alt="{{ exp.company_name }}" class="experience-img">
+                <div class="experience-content">
+                    <h3>{{ exp.company_name }}</h3>
+                    <span>{{ exp.domain }} · {{ exp.location }}</span>
+                    <p>{{ exp.start_date }} – {{ exp.end_date }}</p>
+                    <p>{{ exp.description }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p>No experience added yet.</p>
+        {% endfor %}
+    </div>
+
+    <div class="card" id="achievements">
+    <h2>Achievements</h2>
+    <div class="timeline">
+        {% for ach in achievement_keys %}
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <h3>{{ ach.event_name }}</h3>
+                <span>{{ ach.date|date:"Y" }}</span>
+                <p>{{ ach.description }}</p>
+
+                {% if ach.image %}
+                <img src="{{ ach.image.url }}"
+                     alt="{{ ach.event_name }}"
+                     style="margin-top:0.5rem; border-radius:8px; max-width:100%;">
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p>No achievements added yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+    <div class="card" id="certifications">
+    <h2>Certifications</h2>
+    <div class="cert-grid">
+        {% for cert in certification_key %}
+        <div class="cert-card">
+            <h3>{{ cert.certificate_name }}</h3>
+            <span>{{ cert.issue_date|date:"Y" }}</span>
+            <p>{{ cert.description }}</p>
+
+            {% if cert.link %}
+            <a href="{{ cert.link }}" target="_blank" class="chip-btn" style="margin-top:0.5rem;">
+                View Certificate ↗
+            </a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p>No certifications available.</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+</div>
+{% endblock %}

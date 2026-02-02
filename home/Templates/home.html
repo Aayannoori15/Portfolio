@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home | Aayan Noori{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <!-- HERO -->
+    <div class="card hero-card">
+        <h1>Hi, I am Aayan Noori</h1>
+
+        <div class="hero-split">
+            <div class="hero-profile">
+                <img src="/media/potrait.jpg" alt="Aayan Noori" class="profile-img">
+            </div>
+
+            <div class="hero-text">
+                <p class="hero-tagline">
+                    A Computer Science student passionate about data, technology, and problem solving.Aspiring AI Engineer and a part time athlete.
+                </p>
+
+                <div class="hero-gibberish" aria-hidden="true">
+                    <div class="hero-gibberish-title">“Building cool things, one line at a time”</div>
+                    <div class="hero-gibberish-body">
+                       AI / ML / Django / Web Development / Automations<br>
+                       Python / SQL / Data Analysis / Machine Learning<br>
+                       Project-Oriented / Problem Solver / Tech Enthusiast<br>
+                       Building Practical Solutions / Coding / Innovating<br>
+                       Learning New Tech / Exploring AI / Startup Mindset<br>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+
+    <!-- TECH STACK -->
+    <div class="card">
+        <h2>Tech Stack</h2>
+        <div class="tech-stack">
+            <span>Python</span>
+            <span>Django</span>
+            <span>MYSQL</span>
+            <span>MongoDB</span>
+            <span>Django Rest Framework</span>
+            <span>Numpy</span>
+            <span>Pandas</span>
+            <span>Scikit Learn</span>
+            <span>Machine Learning</span>
+            <span>N8N</span>
+            <span>Git</span>
+            <span>Github</span>
+            <span>Git</span>
+        </div>
+    </div>
+
+    <div class="card" id="projects">
+    <h2>Projects</h2>
+
+    <div class="projects-grid">
+        {% for proj in project_key %}
+        <div class="project-card">
+            
+            {% if proj.image %}
+            <img src="{{ proj.image.url }}"
+                 alt="{{ proj.project_name }}"
+                 style="width:100%; border-radius:12px; margin-bottom:0.6rem;">
+            {% endif %}
+
+            <h3>{{ proj.project_name }}</h3>
+
+            <p style="font-size:0.85rem; color:var(--muted);">
+                {{ proj.date|date:"M Y" }}
+            </p>
+
+            <p>{{ proj.description }}</p>
+
+            <p style="margin-top:0.5rem;">
+                <strong>Tech:</strong> {{ proj.techstack }}
+            </p>
+
+            {% if proj.link %}
+            <a href="{{ proj.link }}"
+               target="_blank"
+               class="chip-btn"
+               style="margin-top:0.6rem; display:inline-block;">
+                View Project →
+            </a>
+            {% endif %}
+
+        </div>
+        {% empty %}
+        <p>No projects added yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+</div>
+{% endblock %}
