@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-import os 
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +20,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5ajryu5s%r^ekh!51ycgul)ur7#@!-pvl2r+cweibo*2yv&y)j'
+SECRET_KEY = os.getenv("SECRET_KEY")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['*']
+
+ALLOWED_HOSTS = ['aayansportfolio.up.railway.app']
 
 
 # Application definition
@@ -75,10 +77,19 @@ WSGI_APPLICATION = 'personalweb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+import os
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('MYSQL_DATABASE') or os.getenv('MYSQLDATABASE'),
+        'USER': os.getenv('MYSQL_USER') or os.getenv('MYSQLUSER'),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD') or os.getenv('MYSQLPASSWORD'),
+        'HOST': os.getenv('MYSQL_HOST') or os.getenv('MYSQLHOST'),
+        'PORT': os.getenv('MYSQL_PORT') or os.getenv('MYSQLPORT', '3306'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -127,4 +138,4 @@ STATICFILES_DIRS = [
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://portfolio-production-97b2.up.railway.app'  ]
+    'aayansportfolio.up.railway.app'  ]
