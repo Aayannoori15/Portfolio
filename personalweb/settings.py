@@ -78,6 +78,9 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+
+print("DB ENGINE:", DATABASES["default"]["ENGINE"])
+print("DB NAME:", DATABASES["default"]["NAME"])
 # ===== CLOUDINARY CONFIG =====
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
