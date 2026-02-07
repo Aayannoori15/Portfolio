@@ -50,17 +50,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'personalweb.wsgi.application'
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.getenv('MYSQL_DATABASE') or os.getenv('MYSQLDATABASE'),
         'USER': os.getenv('MYSQL_USER') or os.getenv('MYSQLUSER'),
         'PASSWORD': os.getenv('MYSQL_PASSWORD') or os.getenv('MYSQLPASSWORD'),
-        'HOST': os.getenv('MYSQL_HOST') or os.getenv('MYSQLHOST'),
-        'PORT': os.getenv('MYSQL_PORT', '3306') or os.getenv('MYSQLPORT', '3306'),
+        'HOST': os.getenv('MYSQL_HOST') or os.getenv('MYSQLHOST') or '127.0.0.1',
+        'PORT': os.getenv('MYSQL_PORT') or os.getenv('MYSQLPORT') or '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
-
 # ===== CLOUDINARY CONFIG =====
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
