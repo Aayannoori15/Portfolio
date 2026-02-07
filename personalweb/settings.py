@@ -51,19 +51,33 @@ TEMPLATES = [
 WSGI_APPLICATION = 'personalweb.wsgi.application'
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('MYSQL_DATABASE') or os.getenv('MYSQLDATABASE'),
-        'USER': os.getenv('MYSQL_USER') or os.getenv('MYSQLUSER'),
-        'PASSWORD': os.getenv('MYSQL_PASSWORD') or os.getenv('MYSQLPASSWORD'),
-        'HOST': os.getenv('MYSQL_HOST') or os.getenv('MYSQLHOST') or '127.0.0.1',
-        'PORT': os.getenv('MYSQL_PORT') or os.getenv('MYSQLPORT') or '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+MYSQL_NAME = os.getenv('MYSQL_DATABASE') or os.getenv('MYSQLDATABASE')
+MYSQL_USER = os.getenv('MYSQL_USER') or os.getenv('MYSQLUSER')
+MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD') or os.getenv('MYSQLPASSWORD')
+MYSQL_HOST = os.getenv('MYSQL_HOST') or os.getenv('MYSQLHOST')
+MYSQL_PORT = os.getenv('MYSQL_PORT') or os.getenv('MYSQLPORT')
+
+if all([MYSQL_NAME, MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST]):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': MYSQL_NAME,
+            'USER': MYSQL_USER,
+            'PASSWORD': MYSQL_PASSWORD,
+            'HOST': MYSQL_HOST,
+            'PORT': MYSQL_PORT or '3306',
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 # ===== CLOUDINARY CONFIG =====
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
