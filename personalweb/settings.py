@@ -68,28 +68,19 @@ WSGI_APPLICATION = 'personalweb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 # Use MySQL in production (Railway), SQLite for local development
-if os.getenv('MYSQL_HOST') or os.getenv('MYSQLHOST'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('MYSQL_DATABASE') or os.getenv('MYSQLDATABASE'),
-            'USER': os.getenv('MYSQL_USER') or os.getenv('MYSQLUSER'),
-            'PASSWORD': os.getenv('MYSQL_PASSWORD') or os.getenv('MYSQLPASSWORD'),
-            'HOST': os.getenv('MYSQL_HOST') or os.getenv('MYSQLHOST'),
-            'PORT': os.getenv('MYSQL_PORT') or os.getenv('MYSQLPORT', '3306'),
-            'OPTIONS': {
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            },
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('MYSQLDATABASE'),
+        'USER': os.getenv('MYSQLUSER'),
+        'PASSWORD': os.getenv('MYSQLPASSWORD'),
+        'HOST': os.getenv('MYSQLHOST'),
+        'PORT': os.getenv('MYSQLPORT', '3306'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-
+}
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
