@@ -50,18 +50,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'personalweb.wsgi.application'
 
-# ===== DATABASE CONFIG =====
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('MYSQLDATABASE'),
-        'USER': os.getenv('MYSQLUSER'),
-        'PASSWORD': os.getenv('MYSQLPASSWORD'),
-        'HOST': os.getenv('MYSQLHOST'),  # Use Railway Public Host here
-        'PORT': os.getenv('MYSQLPORT', '3306'),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+        'NAME': os.getenv('MYSQL_DATABASE') or os.getenv('MYSQLDATABASE'),
+        'USER': os.getenv('MYSQL_USER') or os.getenv('MYSQLUSER'),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD') or os.getenv('MYSQLPASSWORD'),
+        'HOST': os.getenv('MYSQL_HOST') or os.getenv('MYSQLHOST'),
+        'PORT': os.getenv('MYSQL_PORT', '3306') or os.getenv('MYSQLPORT', '3306'),
     }
 }
 
