@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+from urllib.parse import urlparse, unquote
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -51,11 +53,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'personalweb.wsgi.application'
 
 
+MYSQL_URL = os.getenv('MYSQL_URL') or os.getenv('DATABASE_URL')
 MYSQL_NAME = os.getenv('MYSQL_DATABASE') or os.getenv('MYSQLDATABASE')
 MYSQL_USER = os.getenv('MYSQL_USER') or os.getenv('MYSQLUSER')
 MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD') or os.getenv('MYSQLPASSWORD')
 MYSQL_HOST = os.getenv('MYSQL_HOST') or os.getenv('MYSQLHOST')
 MYSQL_PORT = os.getenv('MYSQL_PORT') or os.getenv('MYSQLPORT')
+
+if MYSQL_URL:
+    parsed = urlparse(MYSQL_URL)
+    if parsed.scheme in {"mysql", "mysql2", "mariadb"}:
+        MYSQL_NAME = unquote(parsed.path.lstrip("/")) or MYSQL_NAME
+        MYSQL_USER = unquote(parsed.username or "") or MYSQL_USER
+        MYSQL_PASSWORD = unquote(parsed.password or "") or MYSQL_PASSWORD
+        MYSQL_HOST = parsed.hostname or MYSQL_HOST
+        MYSQL_PORT = str(parsed.port) if parsed.port else MYSQL_PORT
 
 if all([MYSQL_NAME, MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST]):
     DATABASES = {
@@ -72,15 +84,10 @@ if all([MYSQL_NAME, MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST]):
         }
     }
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-
-print("DB ENGINE:", DATABASES["default"]["ENGINE"])
-print("DB NAME:", DATABASES["default"]["NAME"])
+    raise ImproperlyConfigured(
+        "MySQL configuration missing. Set MYSQL_URL (recommended) or "
+        "MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST, and MYSQL_PORT."
+    )
 # ===== CLOUDINARY CONFIG =====
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
