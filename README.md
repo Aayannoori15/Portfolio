@@ -32,6 +32,11 @@ This repository contains a Django-based portfolio site with custom app views, pr
 ## Deployment Notes
 - `Procfile` and shell scripts are included for platform deployment.
 - Configure `DEBUG`, `ALLOWED_HOSTS`, and database settings for production.
+- For PostgreSQL deployments (Render/Vercel), set `DATABASE_URL` in the form:
+  - `postgresql://USER:PASSWORD@HOST:5432/DB_NAME`
+- Optional host/origin overrides:
+  - `ALLOWED_HOSTS=yourdomain.com,.onrender.com,.vercel.app`
+  - `CSRF_TRUSTED_ORIGINS=https://yourdomain.com,https://*.onrender.com,https://*.vercel.app`
 
 ## Next Improvements
 - Add environment variable template (`.env.example`)

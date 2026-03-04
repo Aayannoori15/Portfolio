@@ -8,7 +8,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['aayansportfolio.up.railway.app', 'localhost', '127.0.0.1']
+default_allowed_hosts = [
+    'localhost',
+    '127.0.0.1',
+    '.onrender.com',
+    '.vercel.app',
+]
+allowed_hosts_env = os.getenv('ALLOWED_HOSTS')
+ALLOWED_HOSTS = (
+    [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
+    if allowed_hosts_env
+    else default_allowed_hosts
+)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -52,42 +63,33 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'personalweb.wsgi.application'
 
+DATABASE_URL = os.getenv('DATABASE_URL')
 
-MYSQL_URL = os.getenv('MYSQL_URL') or os.getenv('DATABASE_URL')
-MYSQL_NAME = os.getenv('MYSQL_DATABASE') or os.getenv('MYSQLDATABASE')
-MYSQL_USER = os.getenv('MYSQL_USER') or os.getenv('MYSQLUSER')
-MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD') or os.getenv('MYSQLPASSWORD')
-MYSQL_HOST = os.getenv('MYSQL_HOST') or os.getenv('MYSQLHOST')
-MYSQL_PORT = os.getenv('MYSQL_PORT') or os.getenv('MYSQLPORT')
-
-if MYSQL_URL:
-    parsed = urlparse(MYSQL_URL)
-    if parsed.scheme in {"mysql", "mysql2", "mariadb"}:
-        MYSQL_NAME = unquote(parsed.path.lstrip("/")) or MYSQL_NAME
-        MYSQL_USER = unquote(parsed.username or "") or MYSQL_USER
-        MYSQL_PASSWORD = unquote(parsed.password or "") or MYSQL_PASSWORD
-        MYSQL_HOST = parsed.hostname or MYSQL_HOST
-        MYSQL_PORT = str(parsed.port) if parsed.port else MYSQL_PORT
-
-if all([MYSQL_NAME, MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST]):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': MYSQL_NAME,
-            'USER': MYSQL_USER,
-            'PASSWORD': MYSQL_PASSWORD,
-            'HOST': MYSQL_HOST,
-            'PORT': MYSQL_PORT or '3306',
-            'OPTIONS': {
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            },
-        }
-    }
-else:
+if not DATABASE_URL:
     raise ImproperlyConfigured(
-        "MySQL configuration missing. Set MYSQL_URL (recommended) or "
-        "MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST, and MYSQL_PORT."
+        "DATABASE_URL is required and must point to PostgreSQL."
     )
+
+parsed = urlparse(DATABASE_URL)
+if parsed.scheme not in {"postgres", "postgresql"}:
+    raise ImproperlyConfigured(
+        "Unsupported DATABASE_URL scheme. Use PostgreSQL, for example: "
+        "postgresql://user:password@host:5432/dbname"
+    )
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': unquote(parsed.path.lstrip('/')),
+        'USER': unquote(parsed.username or ''),
+        'PASSWORD': unquote(parsed.password or ''),
+        'HOST': parsed.hostname or '',
+        'PORT': str(parsed.port or 5432),
+        'OPTIONS': {
+            'sslmode': os.getenv('PGSSLMODE', 'require'),
+        },
+    }
+}
 # ===== CLOUDINARY CONFIG =====
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
@@ -106,7 +108,18 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 
-CSRF_TRUSTED_ORIGINS = ['https://aayansportfolio.up.railway.app']
+default_csrf_trusted_origins = [
+    'http://localhost',
+    'http://127.0.0.1',
+    'https://*.onrender.com',
+    'https://*.vercel.app',
+]
+csrf_trusted_origins_env = os.getenv('CSRF_TRUSTED_ORIGINS')
+CSRF_TRUSTED_ORIGINS = (
+    [origin.strip() for origin in csrf_trusted_origins_env.split(',') if origin.strip()]
+    if csrf_trusted_origins_env
+    else default_csrf_trusted_origins
+)
 
 # ===== PASSWORD VALIDATORS =====
 AUTH_PASSWORD_VALIDATORS = [
