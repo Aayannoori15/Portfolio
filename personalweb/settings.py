@@ -66,11 +66,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'personalweb.wsgi.application'
 
-DATABASE_URL = os.getenv('DATABASE_URL')
+DATABASE_URL = (
+    os.getenv('DATABASE_URL')
+    or os.getenv('POSTGRES_URL')
+    or os.getenv('POSTGRES_PRISMA_URL')
+    or os.getenv('POSTGRES_URL_NON_POOLING')
+)
 
 if not DATABASE_URL:
     raise ImproperlyConfigured(
-        "DATABASE_URL is required and must point to PostgreSQL."
+        "PostgreSQL URL is required. Set DATABASE_URL or Vercel POSTGRES_URL."
     )
 
 parsed = urlparse(DATABASE_URL)
@@ -106,7 +111,11 @@ DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / 'home' / 'static']
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+if os.getenv('VERCEL'):
+    # Vercel serverless deployments do not always run collectstatic with a manifest.
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
