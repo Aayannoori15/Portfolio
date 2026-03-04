@@ -20,6 +20,9 @@ ALLOWED_HOSTS = (
     if allowed_hosts_env
     else default_allowed_hosts
 )
+vercel_url = os.getenv('VERCEL_URL')
+if vercel_url and vercel_url not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(vercel_url)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -120,6 +123,10 @@ CSRF_TRUSTED_ORIGINS = (
     if csrf_trusted_origins_env
     else default_csrf_trusted_origins
 )
+if vercel_url:
+    vercel_origin = f"https://{vercel_url}"
+    if vercel_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(vercel_origin)
 
 # ===== PASSWORD VALIDATORS =====
 AUTH_PASSWORD_VALIDATORS = [
